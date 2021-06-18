@@ -49,7 +49,7 @@ if __name__ == "__main__":
     env = Env()
     agent = QLearningAgent(actions=list(range(env.n_actions)))
     for episode in range(1000):
-        print(episode)
+        env.updateRound(episode)
         state = env.reset()
         while True:
             env.render()

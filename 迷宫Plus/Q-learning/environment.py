@@ -1,13 +1,16 @@
 import time
+from tkinter.constants import CURRENT, S
 import numpy as np
 import tkinter as tk
 from PIL import ImageTk, Image
+from numpy.lib.function_base import delete
 
 np.random.seed(1)
 PhotoImage = ImageTk.PhotoImage
 UNIT = 100
-HEIGHT = 5
-WIDTH = 5
+HEIGHT = 7
+WIDTH = 7
+CURRENTROUND = 0
 
 
 class Env(tk.Tk):
@@ -15,11 +18,27 @@ class Env(tk.Tk):
         super(Env, self).__init__()
         self.action_space = ['u', 'd', 'l', 'r']
         self.n_actions = len(self.action_space)
-        self.title('Q Learning')
+        self.title('Q Learning  Round:'+str(CURRENTROUND+1))
         self.geometry('{0}x{1}'.format(HEIGHT * UNIT, HEIGHT * UNIT))
         self.shapes = self.load_images()
         self.canvas = self._build_canvas()
+        self.currentRound = 0
+        self.isDispalyValue = False
         self.texts = []
+
+    def changeStatus(self):
+        self.isDispalyValue = not self.isDispalyValue
+
+    def updateRound(self, n):
+        CURRENTROUND = n
+        self.title('Q Learning')
+        temp = 'Round:'+str(CURRENTROUND+1)
+        x_dis = 200
+        tk.Label(self, text=temp).place(x=x_dis, y=100)
+        tk.Button(self, text='Show/Hide Value',
+                  command=self.changeStatus).place(x=x_dis, y=200)
+
+
 
     def _build_canvas(self):
         canvas = tk.Canvas(self, bg='white',
@@ -75,13 +94,15 @@ class Env(tk.Tk):
         for i in self.texts:
             self.canvas.delete(i)
         self.texts.clear()
-        for i in range(HEIGHT):
-            for j in range(WIDTH):
-                for action in range(0, 4):
-                    state = [i, j]
-                    if str(state) in q_table.keys():
-                        temp = q_table[str(state)][action]
-                        self.text_value(j, i, round(temp, 2), action)
+
+        if self.isDispalyValue:
+            for i in range(HEIGHT):
+                for j in range(WIDTH):
+                    for action in range(0, 4):
+                        state = [i, j]
+                        if str(state) in q_table.keys():
+                            temp = q_table[str(state)][action]
+                            self.text_value(j, i, round(temp, 2), action)
 
     def coords_to_state(self, coords):
         x = int((coords[0] - 50) / 100)
