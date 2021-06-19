@@ -24,6 +24,7 @@ class Env(tk.Tk):
         self.canvas = self._build_canvas()
         self.currentRound = 0
         self.isDispalyValue = False
+        self.isStar = True
         self.texts = []
 
     def changeStatus(self):
@@ -34,11 +35,10 @@ class Env(tk.Tk):
         self.title('Q Learning')
         temp = 'Round:'+str(CURRENTROUND+1)
         x_dis = 200
-        tk.Label(self, text=temp).place(x=x_dis, y=100)
+        tk.Label(self, text=temp, font=(
+            'Helvetica', '15')).place(x=x_dis, y=100)
         tk.Button(self, text='Show/Hide Value',
-                  command=self.changeStatus).place(x=x_dis, y=200)
-
-
+                  command=self.changeStatus, font=('Helvetica', '15')).place(x=x_dis, y=200)
 
     def _build_canvas(self):
         canvas = tk.Canvas(self, bg='white',
@@ -56,6 +56,8 @@ class Env(tk.Tk):
         self.rectangle = canvas.create_image(50, 50, image=self.shapes[0])
         self.triangle1 = canvas.create_image(250, 150, image=self.shapes[1])
         self.triangle2 = canvas.create_image(150, 250, image=self.shapes[1])
+        self.triangle3 = canvas.create_image(250, 350, image=self.shapes[1])
+        self.star = canvas.create_image(350, 450, image=self.shapes[3])
         self.circle = canvas.create_image(250, 250, image=self.shapes[2])
 
         # pack all
@@ -70,8 +72,10 @@ class Env(tk.Tk):
             Image.open("img/triangle.png").resize((65, 65)))
         circle = PhotoImage(
             Image.open("img/circle.png").resize((65, 65)))
+        star = PhotoImage(
+            Image.open("img/star.png").resize((65, 65)))
 
-        return rectangle, triangle, circle
+        return rectangle, triangle, circle, star
 
     def text_value(self, row, col, contents, action, font='Helvetica', size=10,
                    style='normal', anchor="nw"):
@@ -150,13 +154,20 @@ class Env(tk.Tk):
             reward = 100
             done = True
         elif next_state in [self.canvas.coords(self.triangle1),
-                            self.canvas.coords(self.triangle2)]:
+                            self.canvas.coords(self.triangle2),
+                            self.canvas.coords(self.triangle3)]:
             reward = -100
             done = True
+        elif next_state in [self.canvas.coords(self.star)] and self.isStar:
+            self.isStar = False
+            reward = 5
+            done = False
         else:
             reward = 0
             done = False
 
+        if done:
+            self.isStar = True
         next_state = self.coords_to_state(next_state)
         return next_state, reward, done
 
