@@ -1,5 +1,5 @@
 import time
-from tkinter.constants import CURRENT, HIDDEN, S
+from tkinter.constants import CURRENT, S
 import numpy as np
 import tkinter as tk
 from PIL import ImageTk, Image
@@ -57,7 +57,7 @@ class Env(tk.Tk):
         self.triangle1 = canvas.create_image(250, 150, image=self.shapes[1])
         self.triangle2 = canvas.create_image(150, 250, image=self.shapes[1])
         self.triangle3 = canvas.create_image(250, 350, image=self.shapes[1])
-        self.star = canvas.create_image(150, 50, image=self.shapes[3],tags='start')
+        self.star = canvas.create_image(350, 450, image=self.shapes[3])
         self.circle = canvas.create_image(250, 250, image=self.shapes[2])
 
         # pack all
@@ -161,7 +161,6 @@ class Env(tk.Tk):
         elif next_state in [self.canvas.coords(self.star)] and self.isStar:
             self.isStar = False
             reward = 5
-            self.circle = self.canvas.create_image(150, 50, image=self.shapes[2])
             done = False
         else:
             reward = 0
