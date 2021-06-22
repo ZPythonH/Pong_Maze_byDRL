@@ -24,14 +24,13 @@ class Env(tk.Tk):
         self.canvas = self._build_canvas()
         self.currentRound = 0
         self.isDispalyValue = False
-        self.isStar = False
+        self.isStar = True
         self.texts = []
 
     def changeStatus(self):
         self.isDispalyValue = not self.isDispalyValue
 
     def updateRound(self, n):
-        self.isStar = True
         CURRENTROUND = n
         self.title('Q Learning')
         temp = 'Round:'+str(CURRENTROUND+1)
@@ -63,7 +62,7 @@ class Env(tk.Tk):
         self.triangle6 = canvas.create_image(450, 50, image=self.shapes[1])
         self.triangle7 = canvas.create_image(650, 250, image=self.shapes[1])
         self.triangle8 = canvas.create_image(450, 450, image=self.shapes[1])
-        self.star = canvas.create_image(350, 150, image=self.shapes[3])
+        # self.star = canvas.create_image(350, 150, image=self.shapes[3])
         self.circle = canvas.create_image(650, 550, image=self.shapes[2])
 
         # pack all
@@ -169,17 +168,11 @@ class Env(tk.Tk):
                             self.canvas.coords(self.triangle8)]:
             reward = -100
             done = True
-        elif next_state in [self.canvas.coords(self.star)] and self.isStar:
-            print("Yes!")
-            self.isStar = False
-            reward = 5
-            done = False
         else:
             reward = 0
             done = False
 
-        if done:
-            self.isStar = True
+
         next_state = self.coords_to_state(next_state)
         return next_state, reward, done
 
